@@ -1,0 +1,49 @@
+Entrée en relation, ouverture de compte :
+ 
+Le client se présente à l'agence pour l'ouverture d'un compte bancaire, deux scénarios qui se présentent :
+- Il est déjà client BIAT (possède une fiche client ouverte) : on entame l'ouverture d'un compte
+- Il n'est pas client BIAT : on lui ouvre une fiche client puis ouvrir un compte
+ 
+Une fiche client CUSTOMER :
+CUSTOMER.ID.................. NUMBER
+CUSTOMER.TYPE................ PP/PM  (personne physique, personne morale)
+SHORT.NAME................... CHAR(60)
+GENDER....................... MALE/FEMALE pour les types PP
+DATE.BIRTH.CREATION.......... DATE
+ADDRESS...................... CHAR(60)
+POST.CODE.................... NUMBER
+LEGAL.DOC.NAME............... CIN/PASSEPORT/CARTE_SEJOUR si PP, REGISTRE_COMMERCE/ID_FISCAL si PM
+LEGAL.ID..................... CHAR(30)
+NATIONALITY.................. CHAR(2) qui pointe sur la table COUNTRY (ID, COUNTRY.NAME)
+ACCOUNT.OFFICER.............. NUMBER agence du client qui est égale à celle de l’utilisateur
+TEL.......................... CHAR(20)
+MAIL......................... CHAR(30)
+ 
+Un compte ACCOUNT :
+ACCOUNT.ID................... NUMBER
+CUSTOMER.ID.................. NUMBER qui pointe sur la table CUSTOMER
+ACCOUNT.OFFICER.............. NUMBER agence du compte qui est égale à celle de l’utilisateur
+ACCOUNT.TITLE................ CHAR(60) par défaut hérite le nom du client
+CURRENCY..................... CHAR(3) qui pointe sur la table CURRENCY (ID, NAME) TND, EUR, USD...
+CATEGORY..................... CHEQUE/EPARGNE/COURANT
+WORKING.BALANCE.............. NUMBER initié à ZERO à l'ouverture et doit être non saisissable
+OPENING.DATE................. DATE
+CLOSURE.DATE................. DATE
+ 
+Demandé :
+Créer un site WEB qui englobe les fonctionnalités suivantes.
+L’utilisateur de l’agence accède à cette application via une :
+1- Page d’authentification (Matricule / Mot de passe)
+    On doit avoir une table USER comme suit :
+Matricule (Number)
+Nom (VARCHAR 20)
+Prenom (VARCHAR 20)
+Agence (NUMBER) pointe sur la table DEPT.ACCOUNT.OFFICER (ID, NAME)
+Mail (VARCHAR 30)
+ 
+2-Ecran de création CUSTOMER
+3-Ecran Mise à jour CUSTOMER
+4-Ecran de création ACCOUNT
+5-Ecran Mise à jour ACCOUNT (seulement les comptes qui appartiennent à l’agence de l’utilisateur. La modification se rapporte sur ACCOUNT.TITLE)
+6-Requête de recherche CUSTOMER
+7-Requête de recherche ACCOUNT
