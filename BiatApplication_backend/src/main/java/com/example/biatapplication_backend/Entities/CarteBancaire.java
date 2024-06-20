@@ -13,18 +13,15 @@ import java.io.Serializable;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-public class User implements Serializable {
+public class CarteBancaire implements Serializable {
+
     @Id
-  //  @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long Matricule ;
-    String nom;
-    String prenom;
-    String mail;
-    String password;
-    @Enumerated(EnumType.STRING)
-    Role role;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
+    private String rib;
+    private String nomComplet;
 
-
-
+    @OneToOne
+    private Customer customer;
 }

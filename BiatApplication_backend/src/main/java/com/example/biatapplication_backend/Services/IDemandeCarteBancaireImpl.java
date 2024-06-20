@@ -1,10 +1,7 @@
 package com.example.biatapplication_backend.Services;
 
 import com.example.biatapplication_backend.Entities.*;
-import com.example.biatapplication_backend.Repository.AccountRepository;
-import com.example.biatapplication_backend.Repository.CustomerRepository;
-import com.example.biatapplication_backend.Repository.IDemandeCarteBancaire;
-import com.example.biatapplication_backend.Repository.OfficerRepository;
+import com.example.biatapplication_backend.Repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,6 +25,8 @@ private IDemandeCarteBancaire demandeCarteBancaireRepository;
     private AccountRepository accountRepository;
     @Autowired
     private CustomerRepository customerRepository;
+    @Autowired
+    private ICarteBancaireRepository carteBancaireRepository;
 
 @Override
 @Transactional
@@ -155,12 +154,23 @@ public DemandeCarteBancaire ajouterDemande(DemandeCarteBancaire demandeCarteBanc
     }
 
     @Override
+    @Transactional
     public void accpetedCarteBancaire(Long id) {
         DemandeCarteBancaire demandeCarteBancaire = demandeCarteBancaireRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("DemandeCarteBancaire with ID " + id + " not found"));
 
 
         demandeCarteBancaire.setStatus(Status.ACCEPTED);
+
+
         demandeCarteBancaireRepository.save(demandeCarteBancaire);
+        CarteBancaire carteBancaire = new CarteBancaire();
+        carteBancaire.setRib(demandeCarteBancaire.getRib());
+        carteBancaire.setNomComplet(demandeCarteBancaire.getNomComplet());
+Customer customer=demandeCarteBancaire.getClient();
+carteBancaire.setCustomer(customer);
+customer.setCarteBancaire(carteBancaire);
+        carteBancaireRepository.save(carteBancaire);
+        customerRepository.save(customer);
     }
 }

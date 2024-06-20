@@ -25,7 +25,8 @@ public class Customer implements Serializable {
     String legalId;
     String tel ;
     String mail;
-
+    @OneToOne(mappedBy = "customer")
+    private CarteBancaire carteBancaire;
     @OneToOne(mappedBy = "customer")
     Account account;
 @OneToMany(mappedBy = "client")
