@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -27,30 +28,7 @@ private IDemandeCarteBancaire demandeCarteBancaireRepository;
     private AccountRepository accountRepository;
     @Autowired
     private CustomerRepository customerRepository;
-//    @Override
-//    @Transactional
-//    public DemandeCarteBancaire ajouterDemande(DemandeCarteBancaire demandeCarteBancaire) {
-//
-//        demandeCarteBancaire.setStatus(Status.EN_COURS);
-//        demandeCarteBancaire.setDateDemande(new Date());
-//
-//        Officer officer = demandeCarteBancaire.getAgent();
-//        Customer client = demandeCarteBancaire.getClient();
-//        Account acount=demandeCarteBancaire.getCompte();
-//
-//        demandeCarteBancaire = demandeCarteBancaireRepository.save(demandeCarteBancaire);
-//
-//
-//        officer.getDemandeCarteBancaires().add(demandeCarteBancaire);
-//        client.getDemandeCarteBancaires().add(demandeCarteBancaire);
-//        acount.getDemandeCarteBancaires().add(demandeCarteBancaire);
-//
-//        officerRepository.save(officer);
-//        customerRepository.save(client);
-//    accountRepository.save(acount);
-//        return demandeCarteBancaireRepository.save(demandeCarteBancaire);
-//
-//    }
+
 @Override
 @Transactional
 public DemandeCarteBancaire ajouterDemande(DemandeCarteBancaire demandeCarteBancaire) {
@@ -93,4 +71,74 @@ public DemandeCarteBancaire ajouterDemande(DemandeCarteBancaire demandeCarteBanc
 
     return demandeCarteBancaireRepository.save(demandeCarteBancaire);
 }
+
+    @Override
+    @Transactional
+    public void deleteDemandeCarteBancaire(Long id) {
+
+        DemandeCarteBancaire demandeCarteBancaire = demandeCarteBancaireRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("DemandeCarteBancaire with ID " + id + " not found"));
+
+        // Remove from related entities
+        Officer officer = demandeCarteBancaire.getAgent();
+        Customer customer = demandeCarteBancaire.getClient();
+        Account account = demandeCarteBancaire.getCompte();
+
+        officer.getDemandeCarteBancaires().remove(demandeCarteBancaire);
+        customer.getDemandeCarteBancaires().remove(demandeCarteBancaire);
+        account.getDemandeCarteBancaires().remove(demandeCarteBancaire);
+
+        // Save Officer, Customer, and Account only if necessary
+        if (!officer.getDemandeCarteBancaires().contains(demandeCarteBancaire)) {
+            officerRepository.save(officer);
+        }
+        if (!customer.getDemandeCarteBancaires().contains(demandeCarteBancaire)) {
+            customerRepository.save(customer);
+        }
+        if (!account.getDemandeCarteBancaires().contains(demandeCarteBancaire)) {
+            accountRepository.save(account);
+        }
+
+        // Finally, delete the DemandeCarteBancaire
+        demandeCarteBancaireRepository.delete(demandeCarteBancaire);
+    }
+
+    @Override
+    public DemandeCarteBancaire updateDemandeCarteBancaire(DemandeCarteBancaire demandeCarteBancaire) {
+
+        Long id = demandeCarteBancaire.getId();
+
+        // Retrieve existing DemandeCarteBancaire object
+        DemandeCarteBancaire existingDemandeCarteBancaire = demandeCarteBancaireRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("DemandeCarteBancaire with ID " + id + " not found"));
+
+        // Update fields with new values
+        existingDemandeCarteBancaire.setStatus(demandeCarteBancaire.getStatus());
+        existingDemandeCarteBancaire.setRib(demandeCarteBancaire.getRib());
+        existingDemandeCarteBancaire.setCategory(demandeCarteBancaire.getCategory());
+        existingDemandeCarteBancaire.setNomComplet(demandeCarteBancaire.getNomComplet());
+        existingDemandeCarteBancaire.setAdresse(demandeCarteBancaire.getAdresse());
+        existingDemandeCarteBancaire.setNumeroTelephone(demandeCarteBancaire.getNumeroTelephone());
+        existingDemandeCarteBancaire.setCin(demandeCarteBancaire.getCin());
+        existingDemandeCarteBancaire.setEmailAdress(demandeCarteBancaire.getEmailAdress());
+        existingDemandeCarteBancaire.setPremierDemande(demandeCarteBancaire.isPremierDemande());
+
+        // Save the updated DemandeCarteBancaire object
+        return demandeCarteBancaireRepository.save(existingDemandeCarteBancaire);
+    }
+
+    @Override
+    public List<DemandeCarteBancaire> getDemandesRejetees() {
+        return demandeCarteBancaireRepository.findByStatus(Status.REJECTED);
+    }
+
+    @Override
+    public List<DemandeCarteBancaire> getDemandeEnCours() {
+        return demandeCarteBancaireRepository.findByStatus(Status.EN_COURS);
+    }
+
+    @Override
+    public List<DemandeCarteBancaire> getDemandesACCEPTED() {
+        return demandeCarteBancaireRepository.findByStatus(Status.ACCEPTED);
+    }
 }

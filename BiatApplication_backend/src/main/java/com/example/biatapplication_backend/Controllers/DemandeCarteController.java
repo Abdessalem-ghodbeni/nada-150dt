@@ -9,10 +9,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(path = "/demandeCarte")
@@ -31,6 +30,51 @@ public class DemandeCarteController {
         }
     }
 
+    @DeleteMapping(path = "/delete/{id}")
+    public ResponseEntity<String> SupprimerBloc(@PathVariable("id") long idbloc) {
+        try {
+        demandeCarteBancaireService.deleteDemandeCarteBancaire(idbloc);
+            return ResponseEntity.ok("Demande deleted avec succé");
+        } catch (RessourceNotFound exception) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(exception.getMessage());
+        }
 
+    }
+    @PutMapping(path = "/edit")
+    public ResponseEntity<?> ModifierBloc(@RequestBody DemandeCarteBancaire bloc) {
+        try {
+            DemandeCarteBancaire blocUpdating = demandeCarteBancaireService.updateDemandeCarteBancaire(bloc);
+            return new ResponseEntity<>(blocUpdating, HttpStatus.OK);
+        } catch (RessourceNotFound exception) {
+            return new ResponseEntity<>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
+    @GetMapping(path = "/allDemande/rejected")
+    public ResponseEntity<?> getAllChambre() {
+
+        try {
+            List<DemandeCarteBancaire> chambres = demandeCarteBancaireService.getDemandesRejetees();
+            if (chambres.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.OK).body("Liste est vide ");
+            }
+            return ResponseEntity.ok(chambres);
+        } catch (RessourceNotFound exception) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("quelque chose mal passé");
+        }
+    }
+
+    @GetMapping(path = "/allDemande/accepted")
+    public ResponseEntity<?> getAllChambreAccepted() {
+
+        try {
+            List<DemandeCarteBancaire> chambres = demandeCarteBancaireService.getDemandesACCEPTED();
+            if (chambres.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.OK).body("Liste est vide ");
+            }
+            return ResponseEntity.ok(chambres);
+        } catch (RessourceNotFound exception) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("quelque chose mal passé");
+        }
+    }
 }
