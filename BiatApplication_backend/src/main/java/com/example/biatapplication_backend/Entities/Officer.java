@@ -31,5 +31,7 @@ public class Officer implements Serializable {
     @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "officer")
     List<Account> accounts =new ArrayList<>();
+    @OneToMany(mappedBy = "agent")
+    private List<DemandeCarteBancaire> demandeCarteBancaires;
 
 }

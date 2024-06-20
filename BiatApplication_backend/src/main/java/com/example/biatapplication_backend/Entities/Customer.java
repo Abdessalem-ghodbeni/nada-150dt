@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 @Entity @Getter @Setter @AllArgsConstructor @NoArgsConstructor
 public class Customer implements Serializable {
@@ -27,6 +28,7 @@ public class Customer implements Serializable {
 
     @OneToOne(mappedBy = "customer")
     Account account;
-
+@OneToMany(mappedBy = "client")
+    private List<DemandeCarteBancaire> demandeCarteBancaires;
 
 }

@@ -9,6 +9,7 @@ import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Getter
@@ -31,4 +32,9 @@ public class Account implements Serializable {
     @OneToOne
     @JoinColumn(name = "customerId")
     Customer customer;
+
+
+    @OneToMany(mappedBy = "compte")
+    private List<DemandeCarteBancaire> demandeCarteBancaires;
+
 }

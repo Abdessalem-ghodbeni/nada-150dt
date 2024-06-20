@@ -36,24 +36,33 @@ public class SecurityConfig {
         return new AccountSecurityService();
     }
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-
-        return httpSecurity.cors(cors -> cors.configurationSource(corsConfigurationSource())).csrf(csrf->csrf.disable())
-                .authorizeHttpRequests(auth->auth
-                        .requestMatchers("/account/login",
-                                "/account/signup"
-
-                        )
-                        .permitAll()
-                        .anyRequest().authenticated())
-                //.anyRequest().permitAll())
-                .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authenticationProvider(authenticationProvider())
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-                .build();
-    }
-
+//    @Bean
+//    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+//
+//        return httpSecurity.cors(cors -> cors.configurationSource(corsConfigurationSource())).csrf(csrf->csrf.disable())
+//                .authorizeHttpRequests(auth->auth
+//                        .requestMatchers("/account/login",
+//                                "/account/signup"
+//
+//                        )
+//                        .permitAll()
+//                        .anyRequest().authenticated())
+//                //.anyRequest().permitAll())
+//                .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+//                .authenticationProvider(authenticationProvider())
+//                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+//                .build();
+//    }
+@Bean
+public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+    return httpSecurity.cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            .csrf(csrf -> csrf.disable())
+            .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authenticationProvider(authenticationProvider())
+            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+            .build();
+}
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
