@@ -141,4 +141,26 @@ public DemandeCarteBancaire ajouterDemande(DemandeCarteBancaire demandeCarteBanc
     public List<DemandeCarteBancaire> getDemandesACCEPTED() {
         return demandeCarteBancaireRepository.findByStatus(Status.ACCEPTED);
     }
+
+    @Override
+    @Transactional
+    public void updateDemandeCarteBancaireStatus(Long id) {
+        DemandeCarteBancaire demandeCarteBancaire = demandeCarteBancaireRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("DemandeCarteBancaire with ID " + id + " not found"));
+
+
+            demandeCarteBancaire.setStatus(Status.REJECTED);
+            demandeCarteBancaireRepository.save(demandeCarteBancaire);
+
+    }
+
+    @Override
+    public void accpetedCarteBancaire(Long id) {
+        DemandeCarteBancaire demandeCarteBancaire = demandeCarteBancaireRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("DemandeCarteBancaire with ID " + id + " not found"));
+
+
+        demandeCarteBancaire.setStatus(Status.ACCEPTED);
+        demandeCarteBancaireRepository.save(demandeCarteBancaire);
+    }
 }

@@ -11,5 +11,6 @@ public interface IDemandeCarteBancaireSerives {
     public List<DemandeCarteBancaire> getDemandesRejetees();
     public List<DemandeCarteBancaire> getDemandeEnCours();
     public List<DemandeCarteBancaire> getDemandesACCEPTED();
-
+public void updateDemandeCarteBancaireStatus(Long id) ;
+    public void accpetedCarteBancaire(Long id) ;
 }

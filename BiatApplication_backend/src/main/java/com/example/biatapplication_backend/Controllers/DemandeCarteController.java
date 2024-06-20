@@ -77,4 +77,28 @@ public class DemandeCarteController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("quelque chose mal passé");
         }
     }
+
+    @PutMapping(path = "/refuser/demande/{idbloc}")
+    public ResponseEntity<?> RefuserDemande( @PathVariable("idbloc") long idbloc) {
+        try {
+            demandeCarteBancaireService.updateDemandeCarteBancaireStatus(idbloc);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (RessourceNotFound exception) {
+            return new ResponseEntity<>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+
+    @PutMapping(path = "/accepter/demande/{idbloc}")
+    public ResponseEntity<?> AccepterDemande( @PathVariable("idbloc") long idbloc) {
+        try {
+            demandeCarteBancaireService.accpetedCarteBancaire(idbloc);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (RessourceNotFound exception) {
+            return new ResponseEntity<>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
 }
