@@ -16,7 +16,7 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "/demandeCarte")
 @RequiredArgsConstructor
-
+@CrossOrigin(origins = "*")
 public class DemandeCarteController {
 
     private final IDemandeCarteBancaireSerives demandeCarteBancaireService;
