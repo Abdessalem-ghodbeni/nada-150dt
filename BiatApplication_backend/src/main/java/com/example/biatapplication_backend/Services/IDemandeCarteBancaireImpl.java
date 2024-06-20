@@ -27,28 +27,70 @@ private IDemandeCarteBancaire demandeCarteBancaireRepository;
     private AccountRepository accountRepository;
     @Autowired
     private CustomerRepository customerRepository;
-    @Override
-    @Transactional
-    public DemandeCarteBancaire ajouterDemande(DemandeCarteBancaire demandeCarteBancaire) {
+//    @Override
+//    @Transactional
+//    public DemandeCarteBancaire ajouterDemande(DemandeCarteBancaire demandeCarteBancaire) {
+//
+//        demandeCarteBancaire.setStatus(Status.EN_COURS);
+//        demandeCarteBancaire.setDateDemande(new Date());
+//
+//        Officer officer = demandeCarteBancaire.getAgent();
+//        Customer client = demandeCarteBancaire.getClient();
+//        Account acount=demandeCarteBancaire.getCompte();
+//
+//        demandeCarteBancaire = demandeCarteBancaireRepository.save(demandeCarteBancaire);
+//
+//
+//        officer.getDemandeCarteBancaires().add(demandeCarteBancaire);
+//        client.getDemandeCarteBancaires().add(demandeCarteBancaire);
+//        acount.getDemandeCarteBancaires().add(demandeCarteBancaire);
+//
+//        officerRepository.save(officer);
+//        customerRepository.save(client);
+//    accountRepository.save(acount);
+//        return demandeCarteBancaireRepository.save(demandeCarteBancaire);
+//
+//    }
+@Override
+@Transactional
+public DemandeCarteBancaire ajouterDemande(DemandeCarteBancaire demandeCarteBancaire) {
 
-        demandeCarteBancaire.setStatus(Status.EN_COURS);
-        demandeCarteBancaire.setDateDemande(new Date());
-        Account compte = demandeCarteBancaire.getCompte();
-        Officer officer = demandeCarteBancaire.getAgent();
-        Customer client = demandeCarteBancaire.getClient();
-        Account acount=demandeCarteBancaire.getCompte();
+    demandeCarteBancaire.setStatus(Status.EN_COURS);
+    demandeCarteBancaire.setDateDemande(new Date());
 
-        demandeCarteBancaire = demandeCarteBancaireRepository.save(demandeCarteBancaire);
+    // Ensure Officer, Customer, and Account objects are properly fetched or created
+    Long officerId = demandeCarteBancaire.getAgent().getId();
+    Long customerId = demandeCarteBancaire.getClient().getId();
+    Long accountId = demandeCarteBancaire.getCompte().getId();
 
+    Officer officer = officerRepository.findById(officerId).orElseThrow(() ->
+            new IllegalArgumentException("Officer with ID " + officerId + " not found"));
+    Customer customer = customerRepository.findById(customerId).orElseThrow(() ->
+            new IllegalArgumentException("Customer with ID " + customerId + " not found"));
+    Account account = accountRepository.findById(accountId).orElseThrow(() ->
+            new IllegalArgumentException("Account with ID " + accountId + " not found"));
 
-        officer.getDemandeCarteBancaires().add(demandeCarteBancaire);
-        client.getDemandeCarteBancaires().add(demandeCarteBancaire);
-        acount.getDemandeCarteBancaires().add(demandeCarteBancaire);
+    demandeCarteBancaire.setAgent(officer);
+    demandeCarteBancaire.setClient(customer);
+    demandeCarteBancaire.setCompte(account);
 
+    demandeCarteBancaire = demandeCarteBancaireRepository.save(demandeCarteBancaire);
+
+    officer.getDemandeCarteBancaires().add(demandeCarteBancaire);
+    customer.getDemandeCarteBancaires().add(demandeCarteBancaire);
+    account.getDemandeCarteBancaires().add(demandeCarteBancaire);
+
+    // Save Officer, Customer, and Account only if necessary
+    if (!officer.getDemandeCarteBancaires().contains(demandeCarteBancaire)) {
         officerRepository.save(officer);
-        customerRepository.save(client);
-    accountRepository.save(acount);
-        return demandeCarteBancaireRepository.save(demandeCarteBancaire);
-
     }
+    if (!customer.getDemandeCarteBancaires().contains(demandeCarteBancaire)) {
+        customerRepository.save(customer);
+    }
+    if (!account.getDemandeCarteBancaires().contains(demandeCarteBancaire)) {
+        accountRepository.save(account);
+    }
+
+    return demandeCarteBancaireRepository.save(demandeCarteBancaire);
+}
 }

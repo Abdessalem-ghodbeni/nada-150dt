@@ -23,15 +23,15 @@ public class DemandeCarteBancaire implements Serializable {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "client_id", nullable = false)
+    @JoinColumn(name = "client_id")
     private Customer client;
 
     @ManyToOne
-    @JoinColumn(name = "agent_id", nullable = false)
+    @JoinColumn(name = "agent_id")
     private Officer agent;
 
     @ManyToOne
-    @JoinColumn(name = "compte_id", nullable = false)
+    @JoinColumn(name = "compte_id")
     private Account compte;
 
     @Enumerated(EnumType.STRING)

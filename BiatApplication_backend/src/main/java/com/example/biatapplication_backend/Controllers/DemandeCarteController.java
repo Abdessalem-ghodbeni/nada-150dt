@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 
 public class DemandeCarteController {
-    @Lazy
+
     private final IDemandeCarteBancaireSerives demandeCarteBancaireService;
     @PostMapping(path = "/add")
     public ResponseEntity<DemandeCarteBancaire> AjouterNouvelleDemandeCarte(@RequestBody DemandeCarteBancaire demandeCarteBancaire) {
